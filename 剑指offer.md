@@ -291,3 +291,163 @@ public class Solution {
 }
 ```
 ---
+### NO10. 矩形覆盖
+    题目描述
+    我们可以用2*1的小矩形横着或者竖着去覆盖更大的矩形。请问用n个2*1的小矩形无重叠地覆盖一个2*n的大矩形，总共有多少种方法？
+    
+ - 归纳总结发现还是一个斐波那契额数列，跟之前解法一样，不付代码
+
+---
+### NO11. 数值的整数次方 
+    题目描述
+    输入一个整数，输出该数二进制表示中1的个数。其中负数用补码表。
+
+#### 解法一
+
+ - 用逻辑左移避免负数最高位在算数左移时补一造成的死循环。
+```
+public class Solution {
+    public int NumberOf1(int n) {
+        int count=0;
+        while(n!=0)
+        {
+            if((n&1)!=0){
+               count++;             
+            }
+              n=n>>>1; 
+        }
+        return count;
+    }
+}
+```
+#### 解法二
+ - 用1不停左移检测每一位
+ - 注意$flag！=0$这个判断会在越界时为0，也意味着每次都得循环32或者更多次(取决于系统)
+ - 注意 if((n&flag)!=0) 这个判断条件不能写成if((n&flag)==0)，因为按位与的时候当前位为1或0，但结果不一定。
+
+```
+public class Solution {
+    public int NumberOf1(int n) {
+        int count=0;
+        int flag=1;
+        while(flag!=0)
+        {
+            if((n&flag)!=0){
+               count++;             
+            }
+              flag=flag<<1; 
+        }
+        return count;
+    }
+}
+```
+#### NO11. 解法三
+
+ - 剑指offer P102
+
+#### 解法四
+
+ - 非常巧妙的一种做法将数字转成字符串，再转成字符数组，统计数组中1的个数。
+
+```java
+public class Solution {
+    public int NumberOf1(int n) {
+        int t=0;
+            char[]ch=Integer.toBinaryString(n).toCharArray();
+            for(int i=0;i<ch.length;i++){
+                if(ch[i]=='1'){
+                    t++;
+                }
+            }
+            return t;
+    }
+}
+```
+
+---
+### 数值的整数次方
+    题目描述
+    给定一个double类型的浮点数base和int类型的整数exponent。求base的exponent次方。
+    
+#### 解法一
+ - 注意特殊情况
+ - 其实还缺一个特例的判断，即base为0的时候，这时double不能用if(base==0)来判断
+
+```java
+public class Solution {
+    public double Power(double base, int exponent) {
+        double  result=1;
+        if(exponent==0)
+            return 1;
+        for(int i=0;i<Math.abs(exponent);i++){
+            result*=base;
+        }
+        if(exponent<0){
+            result=1/result;
+        }
+        return result;      
+  }
+}
+```
+#### 解法二
+
+---
+## LEETCODE
+
+### no.1 TWO SUM
+
+    给定一个整数数组和一个目标值，找出数组中和为目标值的两个数。你可以假设每个输入只对应一种答案，且同样的元素不能被重复利用。
+
+    示例:
+    给定 nums = [2, 7, 11, 15], target = 9
+    因为 nums[0] + nums[1] = 2 + 7 = 9
+    所以返回 [0, 1]
+
+#### 解法一
+
+ - 暴力搜索，复杂度$O(n^2)$,第一时间反应的解法。
+
+```java
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        int[] result=new int[2];
+        for(int i=0;i<nums.length-1;i++)
+            for(int j=i+1;j<nums.length;j++)
+            {
+                if(nums[i]+nums[j]==target){
+                    result[0]=i;
+                    result[1]=j;
+                    return result;
+                }
+            }
+        return result;
+    }
+}
+```
+
+#### 解法二
+
+ - 利用hashmap查询速度时间复杂度一般为$O(1)$的特点，减少时间复杂度。
+ - hashmap由于key-value对的特性，所以查找速度快。
+ - `map.put(nums[i], i)`,传进key和value参数
+ - `Map<Integer, Integer> map = new HashMap<>()`新建一个HashMap
+ - `map.containsKey(complement)`找到对应的数组索引
+ - `map.get(complement)`取对应的数组索引
+ - `throw new IllegalArgumentException("No two sum solution")`没有返回值时抛出异常
+
+```
+public int[] twoSum(int[] nums, int target) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < nums.length; i++) {
+        map.put(nums[i], i);
+    }
+    for (int i = 0; i < nums.length; i++) {
+        int complement = target - nums[i];
+        if (map.containsKey(complement) && map.get(complement) != i) {
+            return new int[] { i, map.get(complement) };
+        }
+    }
+    throw new IllegalArgumentException("No two sum solution");
+}
+```
+---

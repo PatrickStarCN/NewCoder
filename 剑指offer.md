@@ -164,7 +164,7 @@ public class Solution {
 #### 解法一
 
  - 最普通的方式直接遍历数组找到最小值，没有利用旋转和排序数组的特性。复杂度$O(n)$
-```JAVA
+```java
 import java.util.ArrayList;
 public class Solution {
     public int minNumberInRotateArray(int [] array) {
@@ -188,7 +188,7 @@ public class Solution {
 #### 解法二
  - 稍微优化一下,利用旋转特性,旋转分界出前一个元素大于后一个元素，如果没有旋转则输出第一个值，复杂度还是$O(n)$
 
-```JAVA
+```java
 import java.util.ArrayList;
 public class Solution {
     public int minNumberInRotateArray(int [] array) {
@@ -232,7 +232,7 @@ public class Solution {
 #### 解法二
 
  - 循环解决问题，从前往后，注意特殊项1,2
-```
+```java
 public class Solution {
     public int Fibonacci(int n) {
     int fibN_0 = 1;
@@ -305,7 +305,7 @@ public class Solution {
 #### 解法一
 
  - 用逻辑左移避免负数最高位在算数左移时补一造成的死循环。
-```
+```java
 public class Solution {
     public int NumberOf1(int n) {
         int count=0;
@@ -325,7 +325,7 @@ public class Solution {
  - 注意$flag！=0$这个判断会在越界时为0，也意味着每次都得循环32或者更多次(取决于系统)
  - 注意 if((n&flag)!=0) 这个判断条件不能写成if((n&flag)==0)，因为按位与的时候当前位为1或0，但结果不一定。
 
-```
+```java
 public class Solution {
     public int NumberOf1(int n) {
         int count=0;
@@ -341,7 +341,7 @@ public class Solution {
     }
 }
 ```
-#### NO11. 解法三
+#### 解法三
 
  - 剑指offer P102
 
@@ -365,7 +365,7 @@ public class Solution {
 ```
 
 ---
-### 数值的整数次方
+### NO12. 数值的整数次方
     题目描述
     给定一个double类型的浮点数base和int类型的整数exponent。求base的exponent次方。
     
@@ -389,12 +389,175 @@ public class Solution {
   }
 }
 ```
-#### 解法二
+
+### NO13. 调整数组顺序使奇数位于偶数前面
+    题目描述
+    输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有的奇数位于数组的前半部分，所有的偶数位于位于数组的后半部分，并保证奇数和奇数，偶数和偶数之间的相对位置不变。
+    
+#### 解法一
+
+ - 非常蠢的方法也是我的第一反应，但时间复杂度为$O(n)$，拿空间换时间
+
+```java
+public class Solution {
+    public void reOrderArray(int [] array) {
+        int count=0;
+        int[]  result=new int[array.length];
+        for(int i=0;i<array.length;i++)
+        {
+            if(array[i]%2==1)
+            { 
+             result[count]=array[i]; 
+             count++;
+            }
+        }
+       for(int i=0;i<array.length;i++)
+        {
+            if(array[i]%2==0)
+            {
+             result[count]=array[i]; 
+             count++;
+            }
+        }
+        for(int i=0;i<array.length;i++)
+        {          
+             array[i]=result[i];            
+        }       
+    }
+}
+```
+### NO14. 链表中倒数第k个结点
+
+    题目描述
+    输入一个链表，输出该链表中倒数第k个结点。
+    
+
+ - 还是和翻转链表一样的思路，用栈来存储链表，不过栈数量多了会溢出，第二遍做的时候看能不能补上其他的解法
+ - 注意特殊情况k比链表长度大，或者k为0，或者链表为空
+
+```java
+import java.util.Stack;
+/*
+public class ListNode {
+    int val;
+    ListNode next = null;
+
+    ListNode(int val) {
+        this.val = val;
+    }
+}*/
+public class Solution {
+    public ListNode FindKthToTail(ListNode head,int k) {
+        Stack<ListNode> s1=new Stack<ListNode>();
+        int count=0;
+        if（head==null）
+            return null;
+        while(head!=null)
+        {
+            s1.push(head);
+            head=head.next;
+            count++;
+        }
+        if(count<k||k==0)
+            return null;
+        for(int i=0;i<k-1;i++)
+        {
+            s1.pop();
+        }
+         return s1.pop();
+    }
+}
+```
+
+
+----------
+### NO15. 反转链表
+    题目描述
+    输入一个链表，反转链表后，输出新链表的表头。
+    
+
+ - 过程见笔记本 之后把图贴上来
+
+```java
+/*
+public class ListNode {
+    int val;
+    ListNode next = null;
+
+    ListNode(int val) {
+        this.val = val;
+    }
+}*/
+public class Solution {
+    public ListNode ReverseList(ListNode head) {
+     ListNode pre=null;
+     ListNode next=null;
+     if(head==null)
+         return null;
+      while(head!=null)
+      {
+          next=head.next;
+          head.next=pre;
+          pre=head;
+          head=next;
+      }
+        return pre;            
+    }
+}
+```
+
+
+----------
+
+
+### NO16. 合并两个排序的链表
+    输入两个单调递增的链表，输出两个链表合成后的链表，当然我们需要合成后的链表满足单调不减规则。
+
+ - 代码鲁棒性，如果list1或者list2输出为null的情况
+ - 每次找到最head1.val和head2.val中较小的那个加入merge后的链表，然后剩下的重复此操作，从而递归
+ - 存在不递归解法，第二遍做看能不能补上
+
+```java
+/*
+public class ListNode {
+    int val;
+    ListNode next = null;
+
+    ListNode(int val) {
+        this.val = val;
+    }
+}*/
+public class Solution {
+    public ListNode Merge(ListNode list1,ListNode list2) {
+        
+        if(list1==null)
+            return list2;
+        else if(list2==null)
+            return list1;
+        ListNode mList=null;
+        if(list1.val<list2.val)
+        {
+         mList=list1;
+         mList.next=Merge(list1.next,list2);
+        }
+        else{
+         mList=list2;
+         mList.next=Merge(list1,list2.next);    
+        }
+        return mList;       
+    }
+}
+```
+
+
+----------
+### NO17. 
+
 
 ---
 ## LEETCODE
 
-### no.1 TWO SUM
+### NO.1 TWO SUM
 
     给定一个整数数组和一个目标值，找出数组中和为目标值的两个数。你可以假设每个输入只对应一种答案，且同样的元素不能被重复利用。
 
@@ -435,7 +598,7 @@ class Solution {
  - `map.get(complement)`取对应的数组索引
  - `throw new IllegalArgumentException("No two sum solution")`没有返回值时抛出异常
 
-```
+```java
 public int[] twoSum(int[] nums, int target) {
     Map<Integer, Integer> map = new HashMap<>();
     for (int i = 0; i < nums.length; i++) {
@@ -451,3 +614,112 @@ public int[] twoSum(int[] nums, int target) {
 }
 ```
 ---
+### no.2 ADD TWO NUMBERS
+    给定两个非空链表来表示两个非负整数。位数按照逆序方式存储，它们的每个节点只存储单个数字。将两数相加返回一个新的链表。你可以假设除了数字 0 之外，这两个数字都不会以零开头。
+
+    示例：
+    输入：(2 -> 4 -> 3) + (5 -> 6 -> 4)
+    输出：7 -> 0 -> 8
+    原因：342 + 465 = 807
+
+ - 我们首先从最低有效位也就是列表 $l1$ 和 $l2$的表头开始相加。由于每位数字都应当处于$0…9$ 的范围内，我们计算两个数字的和时可能会出现“溢出”。例如，$5 + 7 = 12$。在这种情况下，我们会将当前位的数值设置为 $2$，并将进位 $carry = 1$ 带入下一次迭代。进位$ carry$ 必定是 $0$ 或 1，这是因为两个数字相加（考虑到进位）可能出现的最大和为 $9 + 9 + 1 = 19$。
+ - `dummyHead.next`
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    ListNode dummyHead = new ListNode(0);
+    ListNode p = l1, q = l2, curr = dummyHead;
+    int carry = 0;
+    while (p != null || q != null) {
+        int x = (p != null) ? p.val : 0;
+        int y = (q != null) ? q.val : 0;
+        int sum = carry + x + y;
+        carry = sum / 10;
+        curr.next = new ListNode(sum % 10);
+        curr = curr.next;
+        if (p != null) p = p.next;
+        if (q != null) q = q.next;
+    }
+    if (carry > 0) {
+        curr.next = new ListNode(carry);
+    }
+    return dummyHead.next;
+        
+    }
+}
+```
+### no.832 Flipping an Image
+    给定一个二进制矩阵 A，我们想先水平翻转图像，然后反转图像并返回结果。
+    水平翻转图片就是将图片的每一行都进行翻转，即逆序。例如，水平翻转 [1, 1, 0] 的结果是 [0, 1, 1]。
+    反转图片的意思是图片中的 0 全部被 1 替换， 1 全部被 0 替换。例如，反转 [0, 1, 1] 的结果是 [1, 0, 0]。
+
+    示例 1:
+
+    输入: [[1,1,0],[1,0,1],[0,0,0]]
+    输出: [[1,0,0],[0,1,0],[1,1,1]]
+    解释: 首先翻转每一行: [[0,1,1],[1,0,1],[0,0,0]]；
+    然后反转图片: [[1,0,0],[0,1,0],[1,1,1]]
+#### 解法一
+
+ * 用压栈出栈翻转每一行元素，然后判断翻转。
+
+```java
+class Solution {
+    public int[][] flipAndInvertImage(int[][] A) {
+        Stack<Integer> s1= new  Stack<Integer>();
+        for(int i=0;i<A.length;i++)
+        {
+            for(int j=0;j<A[0].length;j++)
+            {
+                s1.push(A[i][j]);                
+            }
+            for(int j=0;j<A[0].length;j++)
+            {
+            
+              A[i][j]=s1.pop(); 
+                
+                if(A[i][j]==0)
+                    A[i][j]=1;
+                else
+                    A[i][j]=0;          
+            }        
+        }
+       return A;  
+    }
+}
+```
+---
+### Array Partition I
+    给定长度为 2n 的数组, 你的任务是将这些数分成 n 对, 例如 (a1, b1), (a2, b2), ..., (an, bn) ，使得从1 到 n 的 min(ai, bi) 总和最大。
+
+    示例 1:
+
+    输入: [1,4,3,2]
+
+    输出: 4
+    解释: n 等于 2, 最大总和为 4 = min(1, 2) + min(3, 4).
+ 
+ - 分析见 (https://leetcode.com/problems/array-partition-i/discuss/102170/Java-Solution-Sorting.-And-rough-proof-of-algorithm.)
+ - 
+```java
+class Solution {
+    public int arrayPairSum(int[] nums) {
+         Arrays.sort(nums);
+        int result = 0;
+        for (int i = 0; i < nums.length; i += 2) {
+            result += nums[i];
+        }
+        return result;
+    }
+}
+```
+
